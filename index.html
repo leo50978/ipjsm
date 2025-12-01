@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPJSM - Institut Professionnel des Jeunes de Saint-Marc</title>
+    <!-- CDN TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- CDN Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <!-- CDN Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CDN Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Style personnalisé -->
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .menu-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        .menu-visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .section-padding {
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+        @media (max-width: 768px) {
+            .section-padding {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Splash Screen (s'affiche au chargement) -->
+    <div id="splashScreen" class="splash-screen bg-gradient-to-br from-blue-800 to-blue-600">
+        <div class="text-center text-white px-6">
+            <!-- Logo placeholder (tailwind classes) -->
+            <div class="w-32 h-32 mx-auto mb-8 rounded-full bg-white/20 flex items-center justify-center">
+              <img src="logoipjsm-removebg-preview.png" alt="Logo IPJSM" class="h-12 w-auto object-contain">
+            </div>
+            <h1 class="text-4xl font-bold mb-4">Institut Professionnel des Jeunes de Saint-Marc</h1>
+            <p class="text-xl max-w-2xl mx-auto">Formation d'excellence pour une jeunesse compétente et engagée</p>
+            <div class="mt-12">
+                <div class="w-12 h-12 mx-auto border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <p class="mt-4 text-white/80">Chargement...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Site principal (initialement caché) -->
+    <div id="mainContent" class="opacity-0">
+        <!-- Header avec navigation responsive -->
+    <header class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50 transition-all duration-300">
+    <nav class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <div class="mr-3">
+        <img src="logoipjsm-removebg-preview.png" alt="Logo IPJSM" class="h-12 w-auto object-contain">
+    </div>
+                <div>
+                    <h1 class="text-xl font-bold text-blue-800">IPJSM</h1>
+                    <p class="text-xs text-gray-500">Institut Professionnel</p>
+                </div>
+            </div>
+            
+            <!-- Menu desktop -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#accueil" class="text-blue-700 font-medium hover:text-blue-900 transition">Accueil</a>
+                <a href="#formations" class="text-gray-700 font-medium hover:text-blue-700 transition">Formations</a>
+                <a href="#apropos" class="text-gray-700 font-medium hover:text-blue-700 transition">À propos</a>
+                <a href="#admission" class="text-gray-700 font-medium hover:text-blue-700 transition">Admission</a>
+                <a href="#contact" class="text-gray-700 font-medium hover:text-blue-700 transition">Contact</a>
+            </div>
+            
+            <!-- CTA Header -->
+            <div class="hidden md:block">
+                <a href="#admission" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition shadow-md">Postuler maintenant</a>
+            </div>
+            
+            <!-- Bouton menu mobile -->
+            <button id="mobileMenuButton" class="md:hidden text-gray-700 text-xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Menu mobile (caché par défaut avec max-height: 0) -->
+        <div id="mobileMenu" class="md:hidden overflow-hidden transition-all duration-300 ease-in-out max-h-0">
+            <div class="pt-4 pb-4 border-t border-gray-100 mt-4">
+                <div class="flex flex-col space-y-4">
+                    <a href="#accueil" class="text-blue-700 font-medium py-2">Accueil</a>
+                    <a href="#formations" class="text-gray-700 font-medium py-2">Formations</a>
+                    <a href="#apropos" class="text-gray-700 font-medium py-2">À propos</a>
+                    <a href="#admission" class="text-gray-700 font-medium py-2">Admission</a>
+                    <a href="#contact" class="text-gray-700 font-medium py-2">Contact</a>
+                    <a href="#admission" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium text-center mt-2">Postuler maintenant</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+        <!-- Hero Section -->
+        <section id="accueil" class="pt-24 pb-20 md:pt-32 md:pb-28 bg-gradient-to-b from-white to-blue-50">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="fade-in">
+                        <span class="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium mb-4">École de référence à Saint-Marc</span>
+                        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Formez-vous pour l'avenir professionnel</h1>
+                        <p class="text-lg text-gray-600 mb-8">L'Institut Professionnel des Jeunes de Saint-Marc forme une jeunesse compétente, disciplinée et engagée, apte à répondre aux exigences du monde professionnel et à contribuer activement au développement de la société.</p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="#formations" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition text-center shadow-lg">Découvrir nos formations</a>
+                            <a href="#contact" class="bg-white text-blue-700 border border-blue-200 px-8 py-3 rounded-lg font-medium hover:bg-blue-50 transition text-center shadow">Nous contacter</a>
+                        </div>
+                    </div>
+                   <div class="fade-in">
+    <!-- Version avec image principale -->
+    <div class="bg-white rounded-2xl overflow-hidden shadow-2xl">
+        <!-- Image en haut -->
+        <div class="relative h-64 md:h-80">
+            <!-- Image de fond -->
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('hero.jpeg');"></div>
+            <!-- Overlay pour le texte -->
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/70 via-blue-800/40 to-transparent"></div>
+            <!-- Texte superposé -->
+            <div class="relative h-full flex flex-col justify-end p-6">
+                <h3 class="text-2xl font-bold text-white mb-2">Formation d'excellence</h3>
+                <p class="text-white/90">Pour les jeunes de Saint-Marc et ses environs</p>
+            </div>
+        </div>
+        
+        <!-- Statistiques en bas -->
+        <div class="p-6 bg-white">
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div>
+                    <p class="text-2xl font-bold text-blue-700">+500</p>
+                    <p class="text-sm text-gray-600">Étudiants formés</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-blue-700">15+</p>
+                    <p class="text-sm text-gray-600">Programmes</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-blue-700">98%</p>
+                    <p class="text-sm text-gray-600">Taux de réussite</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formations Section -->
+        <section id="formations" class="section-padding bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16 fade-in">
+                    <span class="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium mb-4">Nos programmes</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Formations professionnelles d'excellence</h2>
+                    <p class="text-lg text-gray-600">Nous offrons une variété de programmes conçus pour répondre aux besoins du marché du travail actuel et futur.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Formation 1 -->
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover border border-gray-100 fade-in">
+                        <div class="w-14 h-14 rounded-lg bg-blue-100 flex items-center justify-center mb-6">
+                            <i class="fas fa-laptop-code text-2xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Informatique & Technologie</h3>
+                        <p class="text-gray-600 mb-6">Formation en développement web, maintenance informatique, réseaux et systèmes d'information pour les métiers du numérique.</p>
+                        <a href="#" class="text-blue-600 font-medium flex items-center">En savoir plus <i class="fas fa-arrow-right ml-2"></i></a>
+                    </div>
+                    
+                    <!-- Formation 2 -->
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover border border-gray-100 fade-in">
+                        <div class="w-14 h-14 rounded-lg bg-green-100 flex items-center justify-center mb-6">
+                            <i class="fas fa-business-time text-2xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Gestion & Administration</h3>
+                        <p class="text-gray-600 mb-6">Programmes de comptabilité, gestion d'entreprise, secrétariat bureautique et management pour les organisations modernes.</p>
+                        <a href="#" class="text-blue-600 font-medium flex items-center">En savoir plus <i class="fas fa-arrow-right ml-2"></i></a>
+                    </div>
+                    
+                    <!-- Formation 3 -->
+                    <div class="bg-gray-50 rounded-xl p-6 card-hover border border-gray-100 fade-in">
+                        <div class="w-14 h-14 rounded-lg bg-purple-100 flex items-center justify-center mb-6">
+                            <i class="fas fa-hands-helping text-2xl text-purple-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Services & Relations</h3>
+                        <p class="text-gray-600 mb-6">Formation en tourisme, hôtellerie, relations client et communication pour exceller dans les métiers de service.</p>
+                        <a href="#" class="text-blue-600 font-medium flex items-center">En savoir plus <i class="fas fa-arrow-right ml-2"></i></a>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-12 fade-in">
+                    <a href="#admission" class="inline-flex items-center bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition shadow-md">
+                        Voir toutes nos formations
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- À propos Section -->
+        <section id="apropos" class="section-padding bg-gradient-to-b from-white to-blue-50">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="fade-in">
+                        <span class="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium mb-4">Notre mission</span>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Former la jeunesse de Saint-Marc pour l'avenir</h2>
+                        <p class="text-lg text-gray-600 mb-6">L'Institut Professionnel des Jeunes de Saint-Marc (IPJSM) est une école de référence en matière de formation professionnelle dans la ville de Saint-Marc.</p>
+                        <p class="text-gray-600 mb-8">Notre mission est de former une jeunesse compétente, disciplinée, engagée, apte pour répondre aux exigences du monde professionnel et à contribuer activement au développement de la société.</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 text-xl mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Pédagogie innovante</h4>
+                                    <p class="text-gray-600">Méthodes d'enseignement adaptées aux réalités du marché du travail.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 text-xl mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Encadrement personnalisé</h4>
+                                    <p class="text-gray-600">Suivi individuel de chaque étudiant pour garantir sa réussite.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 text-xl mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Partenariats professionnels</h4>
+                                    <p class="text-gray-600">Réseau d'entreprises partenaires pour stages et emplois.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                   <div class="fade-in">
+    <!-- Vidéo autoplay simple -->
+    <div class="rounded-2xl overflow-hidden shadow-2xl">
+        <div class="relative h-64 md:h-80 bg-black">
+            <!-- Vidéo -->
+            <video 
+                class="w-full h-full object-cover"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+            >
+                <source src="videoipsm.mp4" type="video/mp4">
+                Votre navigateur ne supporte pas la vidéo HTML5.
+            </video>
+            
+            <!-- Texte superposé -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end">
+                <div class="p-6 text-white w-full">
+                    <div class="flex items-center">
+                        <i class="fas fa-play-circle text-2xl mr-3"></i>
+                        <div>
+                            <h3 class="text-xl font-bold">Visite virtuelle du campus</h3>
+                            <p class="text-sm opacity-90 mt-1">Découvrez l'IPJSM en vidéo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+                </div>
+            </div>
+        </section>
+<!-- Galerie Section -->
+<!-- Galerie Section -->
+<section id="galerie" class="section-padding bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto mb-12 fade-in">
+            <span class="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium mb-4">Nos réalisations</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Galerie des réalisations</h2>
+            <p class="text-lg text-gray-600">Découvrez les moments forts, les projets étudiants et la vie sur le campus de l'IPJSM.</p>
+        </div>
+        
+        <!-- Galerie principale (6 images visibles) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+            <!-- Image 1 -->
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover fade-in">
+                <div class="h-64 w-full">
+                    <img src="galerie1.jpeg" alt="Cérémonie de remise des diplômes" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Cérémonie de remise des diplômes</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <!-- Image 2 -->
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover fade-in">
+                <div class="h-64 w-full">
+                    <img src="galerie2.jpeg" alt="Laboratoires modernes" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Laboratoires modernes</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <!-- Image 3 -->
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover fade-in">
+                <div class="h-64 w-full">
+                    <img src="galerie3.jpeg" alt="Vie étudiante active" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Vie étudiante active</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <!-- Image 4 -->
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover fade-in">
+                <div class="h-64 w-full">
+                    <img src="galerie4.jpeg" alt="Salle informatique" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Salle informatique</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <!-- Image 5 -->
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover fade-in">
+                <div class="h-64 w-full">
+                    <img src="galerie5.jpeg" alt="Cours en présentiel" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Cours en présentiel</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <!-- Image 6 -->
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover fade-in">
+                <div class="h-64 w-full">
+                    <img src="galerie6.jpeg" alt="Récompenses et distinctions" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Récompenses et distinctions</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Galerie supplémentaire (cachée par défaut) -->
+        <div id="moreGallery" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+            <!-- Images 7-12 -->
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover">
+                <div class="h-64 w-full">
+                    <img src="galerie7.jpeg" alt="Stages en entreprise" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Stages en entreprise</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover">
+                <div class="h-64 w-full">
+                    <img src="galerie8.jpeg" alt="Recherche appliquée" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Recherche appliquée</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover">
+                <div class="h-64 w-full">
+                    <img src="galerie9.jpeg" alt="Partenariats" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Partenariats</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover">
+                <div class="h-64 w-full">
+                    <img src="galerie10.jpeg" alt="Bibliothèque" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Bibliothèque moderne</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover">
+                <div class="h-64 w-full">
+                    <img src="galerie11.jpeg" alt="Ateliers pratiques" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Ateliers pratiques</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+            
+            <div class="gallery-item group relative overflow-hidden rounded-xl shadow-lg card-hover">
+                <div class="h-64 w-full">
+                    <img src="galerie12.jpeg" alt="Campus extérieur" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+                    <h3 class="text-white text-lg font-bold">Campus extérieur</h3>
+                </div>
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-medium bg-black/50 px-4 py-2 rounded-lg">Voir en grand</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bouton Voir plus / Voir moins -->
+        <div class="text-center fade-in">
+            <button id="toggleGallery" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition shadow-md inline-flex items-center">
+                Voir plus de réalisations
+                <i class="fas fa-chevron-down ml-2"></i>
+            </button>
+        </div>
+        
+        <!-- Modal pour afficher les images en grand -->
+        <div id="imageModal" class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-4">
+            <div class="relative max-w-4xl w-full">
+                <button id="closeModal" class="absolute -top-12 right-0 text-white text-3xl hover:text-blue-300 z-10">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div id="modalImage" class="rounded-lg overflow-hidden bg-black">
+                    <img id="modalImg" src="" alt="" class="w-full max-h-[70vh] object-contain">
+                </div>
+                <div class="flex justify-between items-center mt-4 text-white">
+                    <button id="prevImage" class="flex items-center text-white hover:text-blue-300 px-4 py-2 rounded-lg hover:bg-white/10 transition">
+                        <i class="fas fa-chevron-left mr-2"></i> Précédent
+                    </button>
+                    <p id="imageTitle" class="text-lg font-medium text-center px-4">Titre de l'image</p>
+                    <button id="nextImage" class="flex items-center text-white hover:text-blue-300 px-4 py-2 rounded-lg hover:bg-white/10 transition">
+                        Suivant <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <!-- Admission Section -->
+        <section id="admission" class="section-padding bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16 fade-in">
+                    <span class="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium mb-4">Rejoignez-nous</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Procédure d'admission</h2>
+                    <p class="text-lg text-gray-600">Intégrez l'IPJSM et préparez votre avenir professionnel avec notre équipe pédagogique expérimentée.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <!-- Étape 1 -->
+                    <div class="text-center fade-in">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6 relative">
+                            <span class="text-2xl font-bold text-blue-700">1</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Dépôt de dossier</h3>
+                        <p class="text-gray-600">Remplissez le formulaire en ligne ou déposez votre dossier physique à l'institut.</p>
+                    </div>
+                    
+                    <!-- Étape 2 -->
+                    <div class="text-center fade-in">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6 relative">
+                            <span class="text-2xl font-bold text-blue-700">2</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Entretien & Tests</h3>
+                        <p class="text-gray-600">Passez un entretien avec notre équipe pédagogique et les tests d'aptitude requis.</p>
+                    </div>
+                    
+                    <!-- Étape 3 -->
+                    <div class="text-center fade-in">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-6 relative">
+                            <span class="text-2xl font-bold text-blue-700">3</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">Inscription définitive</h3>
+                        <p class="text-gray-600">Finalisez votre inscription et intégrez la promotion de l'année en cours.</p>
+                    </div>
+                </div>
+                
+                <!-- CTA Admission -->
+                <div class="max-w-2xl mx-auto bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-8 md:p-10 text-center fade-in">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Prêt à commencer votre formation ?</h3>
+                    <p class="text-gray-600 mb-8">Postulez dès maintenant pour l'année académique 2024-2025. Les places sont limitées.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="mailto:normilobert21@gmail.com" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition shadow-md">Postuler maintenant</a>
+                        <a href="#contact" class="bg-white text-blue-700 border border-blue-200 px-8 py-3 rounded-lg font-medium hover:bg-blue-50 transition shadow">Plus d'informations</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section-padding bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-16 fade-in">
+                    <span class="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-medium mb-4">Contactez-nous</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Nous sommes à votre écoute</h2>
+                    <p class="text-lg text-gray-600">Pour toute question sur nos formations, l'admission ou pour planifier une visite de l'institut.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-12">
+                    <!-- Informations de contact -->
+                    <div class="fade-in">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-8">Informations de contact</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
+                                    <i class="fas fa-map-marker-alt text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Adresse</h4>
+                                    <p class="text-gray-600">26 Rue Lamatinière, Saint-Marc, Haïti</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mr-4">
+                                    <i class="fas fa-phone-alt text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Téléphone</h4>
+                                    <p class="text-gray-600">+509 3858-1054</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4">
+                                    <i class="fas fa-envelope text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Email</h4>
+                                    <p class="text-gray-600">normilobert21@gmail.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center mr-4">
+                                    <i class="fab fa-facebook-f text-red-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Facebook</h4>
+                                    <p class="text-gray-600">facebook.com/IPJSM</p>
+                                    <a href="https://www.facebook.com/share/1BnXZxoXJr/" target="_blank" class="text-blue-600 text-sm font-medium mt-1 inline-block">Visitez notre page</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulaire de contact -->
+                    <div class="fade-in">
+                        <div class="bg-white rounded-xl p-6 md:p-8 shadow-lg">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-6">Envoyez-nous un message</h3>
+                            <form id="contactForm">
+                                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label for="firstName" class="block text-gray-700 mb-2">Prénom</label>
+                                        <input type="text" id="firstName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required>
+                                    </div>
+                                    <div>
+                                        <label for="lastName" class="block text-gray-700 mb-2">Nom</label>
+                                        <input type="text" id="lastName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="email" class="block text-gray-700 mb-2">Email</label>
+                                    <input type="email" id="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="subject" class="block text-gray-700 mb-2">Sujet</label>
+                                    <input type="text" id="subject" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label for="message" class="block text-gray-700 mb-2">Message</label>
+                                    <textarea id="message" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" required></textarea>
+                                </div>
+                                
+                                <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 transition shadow-md">Envoyer le message</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white pt-12 pb-8">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- Logo et description -->
+                    <div class="md:col-span-2">
+                        <div class="flex items-center mb-6">
+                          <div class="mr-3">
+        <img src="logoipjsm-removebg-preview.png" alt="Logo IPJSM" class="h-12 w-auto object-contain">
+    </div>
+                            <div>
+                                <h2 class="text-2xl font-bold">IPJSM</h2>
+                                <p class="text-sm text-gray-300">Institut Professionnel des Jeunes de Saint-Marc</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 mb-6">École de référence en matière de formation professionnelle dans la ville de Saint-Marc. Nous formons une jeunesse compétente, disciplinée et engagée.</p>
+                        <div class="flex space-x-4">
+                            <a href="https://www.facebook.com/share/1BnXZxoXJr/" target="_blank" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600 transition">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-400 transition">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-red-500 transition">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-700 transition">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Liens rapides -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-6">Liens rapides</h3>
+                        <ul class="space-y-3">
+                            <li><a href="#accueil" class="text-gray-400 hover:text-white transition">Accueil</a></li>
+                            <li><a href="#formations" class="text-gray-400 hover:text-white transition">Formations</a></li>
+                            <li><a href="#apropos" class="text-gray-400 hover:text-white transition">À propos</a></li>
+                            <li><a href="#admission" class="text-gray-400 hover:text-white transition">Admission</a></li>
+                            <li><a href="#contact" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Contact footer -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-6">Contact</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-map-marker-alt text-blue-400 mt-1 mr-3"></i>
+                                <span class="text-gray-400">26 Rue Lamatinière, Saint-Marc</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-phone-alt text-blue-400 mt-1 mr-3"></i>
+                                <span class="text-gray-400">+509 3858-1054</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-envelope text-blue-400 mt-1 mr-3"></i>
+                                <span class="text-gray-400">normilobert21@gmail.com</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Copyright -->
+                <div class="pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+                    <p>&copy; 2026 Institut Professionnel des Jeunes de Saint-Marc. Tous droits réservés.</p>
+                    <p class="mt-2">Site conçu avec <i class="fas fa-heart text-red-500"></i> pour la jeunesse de Saint-Marc</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts JavaScript -->
+    <script>
+    // Code ultra simple pour le bouton "Voir plus"
+document.getElementById('toggleGallery').addEventListener('click', function() {
+    const moreGallery = document.getElementById('moreGallery');
+    const isHidden = moreGallery.classList.contains('hidden');
+    
+    if (isHidden) {
+        moreGallery.classList.remove('hidden');
+        this.innerHTML = 'Voir moins <i class="fas fa-chevron-up ml-2"></i>';
+    } else {
+        moreGallery.classList.add('hidden');
+        this.innerHTML = 'Voir plus de réalisations <i class="fas fa-chevron-down ml-2"></i>';
+    }
+});
+
+        // Animation du splash screen avec Anime.js
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation d'entrée du splash screen
+            anime({
+                targets: '#splashScreen',
+                opacity: [0, 1],
+                duration: 800,
+                easing: 'easeInOutQuad'
+            });
+            
+            // Animation de sortie du splash screen après 3 secondes
+            setTimeout(function() {
+                anime({
+                    targets: '#splashScreen',
+                    opacity: 0,
+                    scale: 0.9,
+                    duration: 1000,
+                    easing: 'easeInOutQuad',
+                    complete: function() {
+                        document.getElementById('splashScreen').style.display = 'none';
+                        
+                        // Animation d'entrée du contenu principal
+                        anime({
+                            targets: '#mainContent',
+                            opacity: [0, 1],
+                            duration: 800,
+                            easing: 'easeInOutQuad'
+                        });
+                    }
+                });
+            }, 3000);
+            
+         // Gestion du menu mobile
+            // Gestion du menu mobile
+const mobileMenuButton = document.getElementById('mobileMenuButton');
+const mobileMenu = document.getElementById('mobileMenu');
+
+mobileMenuButton.addEventListener('click', function() {
+    if (mobileMenu.classList.contains('max-h-0')) {
+        // Ouvrir le menu
+        mobileMenu.classList.remove('max-h-0');
+        mobileMenu.classList.add('max-h-96');
+        mobileMenuButton.innerHTML = '<i class="fas fa-times"></i>';
+    } else {
+        // Fermer le menu
+        mobileMenu.classList.remove('max-h-96');
+        mobileMenu.classList.add('max-h-0');
+        mobileMenuButton.innerHTML = '<i class="fas fa-bars"></i>';
+    }
+});
+
+// Fermer le menu mobile en cliquant sur un lien
+const mobileMenuLinks = document.querySelectorAll('#mobileMenu a');
+mobileMenuLinks.forEach(link => {
+    link.addEventListener('click', function() {
+        mobileMenu.classList.remove('max-h-96');
+        mobileMenu.classList.add('max-h-0');
+        mobileMenuButton.innerHTML = '<i class="fas fa-bars"></i>';
+    });
+});
+            // Animation des éléments au défilement
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -100px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            // Observer les éléments à animer
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Gestion du formulaire de contact
+            const contactForm = document.getElementById('contactForm');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Simulation d'envoi de formulaire
+                const submitButton = contactForm.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Envoi en cours...';
+                submitButton.disabled = true;
+                
+                setTimeout(function() {
+                    submitButton.textContent = 'Message envoyé !';
+                    submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    submitButton.classList.add('bg-green-600');
+                    
+                    // Réinitialiser le formulaire
+                    contactForm.reset();
+                    
+                    // Réinitialiser le bouton après 3 secondes
+                    setTimeout(function() {
+                        submitButton.textContent = originalText;
+                        submitButton.classList.remove('bg-green-600');
+                        submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                        submitButton.disabled = false;
+                    }, 3000);
+                }, 1500);
+            });
+            
+            // Header qui change d'apparence au défilement
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('shadow-md', 'bg-white');
+                    header.classList.remove('bg-white/95');
+                } else {
+                    header.classList.remove('shadow-md', 'bg-white');
+                    header.classList.add('bg-white/95');
+                }
+            });
+        });
+        
+    </script>
+</body>
+</html>
